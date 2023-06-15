@@ -6,7 +6,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <link rel="stylesheet" href="./public/styles.css">
   <script type="module" src="./src/js/index.js"></script>
-  <title>Quo</title>
+  <title>Juqery-menu</title>
 </head>
 
 <body>
@@ -14,13 +14,14 @@
   <div class="p-10">
     <main class="p-5 m-auto max-w-2xl border rounded-lg">
       <h1 class="sr-only">Меню</h1>
-      <div class="flex">
-        <div class="py-1 flex w-full justify-between gap-x-2 ">
+      <div class="flex" data-menu-row>
+        <div class="py-1 flex w-full justify-between gap-x-2">
           <div class="w-full h-7  whitespace-nowrap overflow-hidden"><button class="w-full h-full flex items-center justify-center bg-gray-300 rounded-2xl text-indigo-700 font-semibold hover:bg-gray-400">1</button></div>
           <div class="w-full h-7 whitespace-nowrap overflow-hidden"><button class="w-full h-full flex items-center justify-center bg-gray-300 rounded-2xl text-indigo-700 font-semibold hover:bg-gray-400">2</button></div>
           <div class="w-full h-7 whitespace-nowrap overflow-hidden"><button class="w-full h-full flex items-center justify-center bg-gray-300 rounded-2xl text-indigo-700 font-semibold hover:bg-gray-400">3</button></div>
         </div>
-        <button class="my-1 group ml-2 border border-dashed border-gray-300 hover:border-gray-500 hover:text-white  inline-flex items-center justify-center px-4 py-1 hover:bg-indigo-600 rounded-full font-normal text-xs transition;">
+        <button class="my-1 group ml-2 border border-dashed border-gray-300 hover:border-gray-500 hover:text-white  inline-flex items-center justify-center px-4 py-1 hover:bg-indigo-600 rounded-full font-normal text-xs transition;"
+          data-button-popup-open>
           <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" aria-hidden="true" class="text-gray-400 w-5 h-5 group-hover:text-white">
             <path stroke-linecap="round" stroke-linejoin="round" d="M12 6v12m6-6H6"></path>
           </svg>
@@ -35,11 +36,11 @@
       </div>
     </main>
     <div class="hidden" data-popup>
+      <div class="fixed inset-0 transform transition-all">
+        <div class="absolute inset-0 bg-gray-500 opacity-75"></div>
+      </div>
       <div class="fixed flex flex-col inset-0 overflow-y-auto px-4 py-6 sm:px-0 z-50">
-        <div class="fixed inset-0 transform transition-all">
-          <div class="absolute inset-0 bg-gray-500 opacity-75"></div>
-        </div>
-        <form class="sm:max-w-2xl mb-6 bg-white rounded-lg shadow-xl transform transition-all sm:w-full sm:m-auto">
+        <form class="sm:max-w-2xl mb-6 bg-white rounded-lg shadow-xl transform transition-all sm:w-full sm:m-auto" data-popup-form>
           <div class="px-6 py-4">
             <h2 class="text-lg text-gray-500">Редактирование</h2>
             <div class="mt-4">
@@ -62,7 +63,7 @@
           <div class="flex flex-row justify-end px-2 sm:px-6 py-4 bg-gray-100 text-right rounded-b-lg">
             <button
               class="inline-flex items-center justify-center px-4 py-1 bg-white border border-gray-200 rounded-full font-normal text-xs ring-0 text-gray-500 hover:shadow-sm hover:text-gray-700 active:text-gray-800 active:bg-gray-50 transition hover:border-gray-300 mx-1 disabled:opacity-25"
-              type="button">Отмена
+              type="button" data-button-popup-close>Отмена
             </button>
             <button type="submit" class="inline-flex items-center justify-center px-4 py-1 bg-indigo-500 hover:bg-indigo-600 text-white border border-transparent rounded-full font-normal text-xs disabled:opacity-25 transition" disabled>Сохранить
             </button>
