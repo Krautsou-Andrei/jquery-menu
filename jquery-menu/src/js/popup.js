@@ -38,16 +38,16 @@ export default class Popup {
     });
     this.popup.classList.add("hidden");
     this.buttonDelete.classList.add("hidden");
+    this.form.buttonSubmit.setAttribute("disabled", "true");
   }
 
-  openPopup(value = "") {
+  openPopup() {
     this.popup.classList.remove("hidden");
 
     Array.from(this.body).forEach((element) => {
       element.style.overflowY = "hidden";
     });
 
-    this.form = new Form(this.popupForm);
     this.form.inputName.value =
       this.value.inputName === undefined ? "" : this.value.inputName;
     this.form.inputValue.value =

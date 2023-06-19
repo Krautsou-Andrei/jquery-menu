@@ -15,7 +15,7 @@ const SELECTORS_MENU = {
   BUTTON_ITEM: "button-item",
   BUTTON_DELETE: "button-delete",
   ITEMS: ".menu-items",
-  MAX_ROWS: 5,
+  MAX_ROWS: 6,
   MAX_ITEMS: 3,
 };
 
@@ -55,7 +55,9 @@ export default class Menu {
     );
     this.sortable = new Sortable(
       this.addRow.bind(this),
-      this.deleteElement.bind(this)
+      this.getIsMaxRow.bind(this),
+      this.deleteElement.bind(this),
+      this.handlerDelete.bind(this)
     );
     this.addListeners();
   }
@@ -84,11 +86,7 @@ export default class Menu {
       this.refresh();
     }
 
-    if (numberRow >= SELECTORS_MENU.MAX_ROWS) {
-      this.buttonAddRow.classList.add("hidden");
-    } else {
-      this.buttonAddRow.classList.remove("hidden");
-    }
+    this.getIsMaxRow();
   }
 
   addItem(value, numberRow) {
@@ -96,18 +94,10 @@ export default class Menu {
 
     const items = this.menuRows[numberRow].querySelector(SELECTORS_MENU.ITEMS);
 
-    const currentButton = this.menuRows[numberRow].querySelector(
-      `.${SELECTORS_MENU.BUTTONS_ADD_ITEM}`
-    );
-
     items.insertAdjacentHTML("beforeend", item);
     this.refresh();
 
-    if (items.children.length === SELECTORS_MENU.MAX_ITEMS) {
-      currentButton.classList.add("hidden");
-    } else {
-      currentButton.classList.remove("hidden");
-    }
+    this.getIsMaxItem(numberRow);
   }
 
   handlerAdd(isRow, numberRow, currentButton) {
@@ -144,6 +134,7 @@ export default class Menu {
     }
 
     this.popup = new Popup(value);
+
     this.popup.openPopup();
 
     const isRow = event.currentTarget.id === SELECTORS_MENU.BUTTON_ADD_ROW;
@@ -178,15 +169,19 @@ export default class Menu {
     const row = element.parentElement.parentElement;
     const numberRow = this.getIndexArray([...this.menu.children], row);
 
-    const numberItems = this.menuRows[numberRow].querySelector(
+    const currentRow = this.menuRows[numberRow].querySelector(
       SELECTORS_MENU.ITEMS
-    ).children.length;
-    if (numberItems === 1) {
+    ).children;
+
+    if (currentRow.length === 1) {
       const menuItems = element.parentElement.parentElement;
       this.deleteElement([menuItems]);
     } else {
       this.deleteElement([element]);
     }
+
+    this.getIsMaxItem(numberRow);
+    this.getIsMaxRow(numberRow);
   }
 
   deleteElement(elements) {
@@ -199,6 +194,30 @@ export default class Menu {
 
   getIndexArray(array, element) {
     return Array.prototype.indexOf.call(array, element);
+  }
+
+  getIsMaxItem(numberRow) {
+    if (numberRow > this.menuRows.length - 1) return;
+    const items = this.menuRows[numberRow].querySelector(SELECTORS_MENU.ITEMS);
+
+    const currentButton = this.menuRows[numberRow].querySelector(
+      `.${SELECTORS_MENU.BUTTONS_ADD_ITEM}`
+    );
+
+    if (items.children.length === SELECTORS_MENU.MAX_ITEMS) {
+      currentButton.classList.add("hidden");
+    } else {
+      currentButton.classList.remove("hidden");
+    }
+  }
+
+  getIsMaxRow() {
+    const numberRow = this.menu.children.length;
+    if (numberRow >= SELECTORS_MENU.MAX_ROWS) {
+      this.buttonAddRow.classList.add("hidden");
+    } else {
+      this.buttonAddRow.classList.remove("hidden");
+    }
   }
 
   refresh() {

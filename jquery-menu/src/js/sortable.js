@@ -5,17 +5,25 @@ const SELCTORS_SORTABLE = {
   ROWS: "menu-row",
   BUTTON_ADD: ".button-add-item",
   MAX_ITEMS: 3,
+  MAX_ROWS: 6,
 };
 
 export default class Sortable {
-  constructor(callbackAdd, callbackDelete) {
+  constructor(
+    callbackAddRow,
+    callbackMaxRow,
+    callbackDelete,
+    calbackHandlerDelete
+  ) {
     this.items = null;
     this.rows = null;
     this.current = null;
     this.listenersItem = new Listeners();
     this.listenersRow = new Listeners();
-    this.callbackAdd = callbackAdd;
+    this.callbackAddRow = callbackAddRow;
+    this.callbackMaxRow = callbackMaxRow;
     this.callbackDelete = callbackDelete;
+    this.calbackHandlerDelete = calbackHandlerDelete;
 
     this.createSortable();
   }
@@ -24,7 +32,6 @@ export default class Sortable {
     this.items = document.getElementsByClassName(SELCTORS_SORTABLE.ITEMS);
     this.rows = document.getElementsByClassName(SELCTORS_SORTABLE.ROWS);
     this.addListenersItem();
-    // this.addListenersRow([...this.rows]);
   }
 
   addListenersItem() {
@@ -68,30 +75,40 @@ export default class Sortable {
 
     const parentElement = targetElement;
     const currentRow = this.current.parentElement;
-    let menu = parentElement.parentElement;
-    const parentButton = menu.parentElement.querySelector(
+    let row = parentElement.parentElement;
+    const parentButton = row.parentElement.querySelector(
       SELCTORS_SORTABLE.BUTTON_ADD
     );
     const targetButton = this.current.parentElement.parentElement.querySelector(
       SELCTORS_SORTABLE.BUTTON_ADD
     );
 
-    const targetIndex = this.getIndexInArray(menu.children, parentElement);
+    const targetIndex = this.getIndexInArray(row.children, parentElement);
 
-    const draggedIndex = this.getIndexInArray(menu.children, this.current);
+    const draggedIndex = this.getIndexInArray(row.children, this.current);
 
     let count = this.getCountElement(parentElement);
 
     if (count < 3) {
       if (draggedIndex > targetIndex) {
-        menu.insertBefore(this.current, parentElement);
+        row.insertBefore(this.current, parentElement);
       } else {
-        menu.insertBefore(this.current, parentElement.nextSibling);
+        row.insertBefore(this.current, parentElement.nextSibling);
       }
-    } else {
-      const inputName = this.current.children[0].innerText;
-      const inputValue = this.current.children[0].name;
-      this.callbackAdd({ inputName, inputValue }, targetIndex);
+    } else if (
+      row.parentElement.parentElement.children.length <
+      SELCTORS_SORTABLE.MAX_ROWS
+    ) {
+      const numberRow = this.getIndexInArray(
+        row.parentElement.parentElement.children,
+        row.parentElement
+      );
+      const value = {
+        inputName: this.current.innerText,
+        inputValue: this.current.children[0].name,
+      };
+      this.calbackHandlerDelete(this.current);
+      this.callbackAddRow(value, numberRow + 1);
     }
 
     if (currentRow.children.length === 0) {
@@ -100,7 +117,7 @@ export default class Sortable {
 
     const isItem = this.current.classList.contains(SELCTORS_SORTABLE.ITEMS);
 
-    if (menu.children.length === SELCTORS_SORTABLE.MAX_ITEMS && isItem) {
+    if (row.children.length === SELCTORS_SORTABLE.MAX_ITEMS && isItem) {
       parentButton.classList.add("hidden");
     } else if (parentButton !== targetButton) {
       parentButton.classList.remove("hidden");
@@ -111,6 +128,8 @@ export default class Sortable {
     } else if (parentButton !== targetButton) {
       targetButton.classList.remove("hidden");
     }
+
+    this.callbackMaxRow();
 
     this.refresh();
   }
